@@ -1,21 +1,21 @@
-//Load Data - a nightmare :)
-var notesData = require("../db/db.json");
 //Dependencies
-var fs = require("fs");
-var express = require('express');
+const fs = require("fs").promises;
+const express = require('express');
+const app = express();
 
-// express server set up? do we need this here and in the server.js?
-var app = express();
+//Global array to push notes to
 const notesArray = [];
+
 //Routing
 module.exports = function(app){
     //api get request
-    app.get("/api/notes", function(req, res){
-        res.json(notesData);
+    app.get("/api/notes", async function(req, res){
+        const newnotesData = await fs.readFile("db/db.json", "utf8");
+        res.json(JSON.parse(newnotesData));
     });
 
     // api post request
-    app.post("/api/notes", function(req, res){
+    app.post("/api/notes", async function(req, res){
         const newNote = {
             title: req.body.title,
             text: req.body.text,
@@ -23,14 +23,10 @@ module.exports = function(app){
             id: ""
         }
         notesArray.push(JSON.stringify(newNote));
-        //data adding to the db.json file
-        fs.writeFile("db/db.json", "[" + notesArray + "]", 'utf-8', function(err) {
-            if (err) throw err
-            console.log('Note Added');
-        });
-        
-    
-       
+
+        //Adds data to the db.json file
+        await fs.writeFile("db/db.json", "[" + notesArray + "]");
+        res.json(true);
     });
 
     //api delete request
