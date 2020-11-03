@@ -6,7 +6,7 @@ var express = require('express');
 
 // express server set up? do we need this here and in the server.js?
 var app = express();
-
+const notesArray = [];
 //Routing
 module.exports = function(app){
     //api get request
@@ -16,14 +16,21 @@ module.exports = function(app){
 
     // api post request
     app.post("/api/notes", function(req, res){
-        var newNote = req.body;
-        //need to add data to the db.json
-        //notes: uuid module to create unique ids - make part of the process 
-        fs.appendFile('db.json', JSON.stringify(newNote), function(err){
-            if (err) {
-                return console.log(err);
-              }
+        const newNote = {
+            title: req.body.title,
+            text: req.body.text,
+            //uuid module to create unique ids - make part of the process 
+            id: ""
+        }
+        notesArray.push(JSON.stringify(newNote));
+        //data adding to the db.json file
+        fs.writeFile("db/db.json", "[" + notesArray + "]", 'utf-8', function(err) {
+            if (err) throw err
+            console.log('Note Added');
         });
+        
+    
+       
     });
 
     //api delete request
