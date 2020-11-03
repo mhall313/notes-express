@@ -20,7 +20,7 @@ module.exports = function(app){
         const newNote = {
             title: req.body.title,
             text: req.body.text,
-            //uuid module to create unique ids - make part of the process 
+            //Future state to use uuid module to create unique ids
             id: i
         }
         notesArray.push(JSON.stringify(newNote));
@@ -32,7 +32,14 @@ module.exports = function(app){
     });
 
     //api delete request
-    app.delete("api/notes/", function(req, res){
-
+    app.delete("/api/notes/:id", async function(req, res){
+        const id = req.params.id;
+        const getData = await fs.readFile("db/db.json", "utf8");
+        const parsedData = JSON.parse(getData);
+        const deleteNote = parsedData.find(note => note.id === id);
+        const index = parsedData.findIndex(deleteNote);
+        parsedData.splice(index);
+        fs.writeFile("db/db.json", "[" + parsedData + "]");
+        res.json(true);
     });
 }
