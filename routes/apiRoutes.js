@@ -1,4 +1,4 @@
-//Load Data
+//Load Data - a nightmare :)
 var notesData = require("../db/db.json");
 //Dependencies
 var fs = require("fs");
@@ -10,7 +10,7 @@ var app = express();
 //Routing
 module.exports = function(app){
     //api get request
-    app.get("api/notes", function(req, res){
+    app.get("/api/notes", function(req, res){
         res.json(notesData);
     });
 
@@ -18,6 +18,7 @@ module.exports = function(app){
     app.post("/api/notes", function(req, res){
         var newNote = req.body;
         //need to add data to the db.json
+        //notes: uuid module to create unique ids - make part of the process 
         fs.appendFile('db.json', JSON.stringify(newNote), function(err){
             if (err) {
                 return console.log(err);
@@ -26,7 +27,7 @@ module.exports = function(app){
     });
 
     //api delete request
-    // app.delete("api/notes/", function(req, res){
+    app.delete("api/notes/", function(req, res){
 
-    // });
+    });
 }
