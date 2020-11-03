@@ -5,6 +5,7 @@ const app = express();
 
 //Global array to push notes to
 const notesArray = [];
+let i = 1;
 
 //Routing
 module.exports = function(app){
@@ -20,9 +21,10 @@ module.exports = function(app){
             title: req.body.title,
             text: req.body.text,
             //uuid module to create unique ids - make part of the process 
-            id: ""
+            id: i
         }
         notesArray.push(JSON.stringify(newNote));
+        i++;
 
         //Adds data to the db.json file
         await fs.writeFile("db/db.json", "[" + notesArray + "]");
