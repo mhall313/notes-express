@@ -1,6 +1,7 @@
 //Dependencies
 const fs = require("fs").promises;
 const express = require('express');
+const { stringify } = require("querystring");
 const app = express();
 
 //Global array to push notes to
@@ -36,10 +37,14 @@ module.exports = function(app){
         const id = req.params.id;
         const getData = await fs.readFile("db/db.json", "utf8");
         const parsedData = JSON.parse(getData);
-        const deleteNote = parsedData.find(note => note.id === id);
-        const index = parsedData.findIndex(deleteNote);
-        parsedData.splice(index);
-        fs.writeFile("db/db.json", "[" + parsedData + "]");
+        for (let j = 0; j < parsedData.length; j ++){
+            if(id == parsedData[j].id){
+                const deleteIndex = (parsedData[j].id - 1);
+                parsedData.splice(deleteIndex, 1); 
+                const stringifyData = JSON.stringify(parsedData);
+                await fs.writeFile("db/db.json", stringifyData);
+            }
+        }
         res.json(true);
     });
 }
